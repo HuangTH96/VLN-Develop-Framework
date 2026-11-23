@@ -5,6 +5,7 @@
 import msgpackrpc
 import threading
 import os
+import json
 
 # 配置UE环境的bash文件名和执行路径
 env_exec_path_dict = {
@@ -133,3 +134,63 @@ def clean_ports(ports: list):
         thread.join()
 
     return
+
+"""
+client不直接接触UE进程，由server负责接受client的请求，处理UE进程后返回所需信息。
+
+server核心 EventHandler 作为处理请求的对象，当客户端发送请求到服务端时，客户端调用的方法名会被分发给EventHandler里的同名方法。应具备以下功能：
+1.启动环境：start_env。选场景 -> 分配端口 -> 生成 settings.json -> Popen 启动UE -> 等RPC端口就绪 -> 返回端口号
+2.关闭环境：stop_env。通过端口号 -> 获取PID -> 杀死
+3.GPU分配
+4. settings.json 生成。为每个实例生成独立的 settings 文件
+
+以及其他辅助功能：
+1. 就绪检测： _wait_port
+"""
+
+class EventHandler(object):
+    def __init__(self, ports_to_scenes: list, selected_gpu_ids: list):
+        self.default_start_port = 41451
+        if ports_to_scenes is None:
+            # 如果没有指定端口，则为每个场景分配一个默认端口号，从 41451 开始递增
+            self.ports_to_scenes = {scene: 41451 + i for i, _ in enumerate(env_exec_path_dict.keys())}
+        else:
+            self.ports_to_scenes = ports_to_scenes
+
+        self.selected_gpu_ids = selected_gpu_ids
+                        
+
+    def start_env(self, env_names: list, ports: list, gpu_ids: list) -> list:
+        """
+        并行启动多个UE环境
+        :param env_names: 场景名称列表
+        :param ports: RPC端口号列表
+        :param gpu_ids: GPU ID列表
+        :return: 返回启动的端口号列表
+        """
+
+        # 检查输入参数
+        if not env_names or not ports:
+            raise ValueError("场景名称或端口号为空")
+
+        if len(env_names) != len(ports):
+            raise ValueError("场景名称和端口号数量不匹配")
+
+        # 生成 settings.json 文件
+        for env_name in env_names:
+            settings_path = os.path.join(env_exec_path_dict[env_name]['exec_path'], 'settings.json')
+            with open(settings_path, 'w') as f:
+                json.dump(AIRSIM_SETTINGS_JSON, f, indent=4)
+
+        # 启动UE进程
+        bash_name = env_exec_path_dict[env_names]['bash_name']
+        exec_path = env_exec_path_dict[env_names]['exec_path']
+        bash_path = os.path.join(exec_path, bash_name)
+        
+        # 使用Popen启动UE进程
+        process = os.popen(f"cd {exec_path} && bash {bash_name} {ports}")
+        
+        # 等待RPC端口就绪
+        self._wait_port(ports)
+        
+        return ports
