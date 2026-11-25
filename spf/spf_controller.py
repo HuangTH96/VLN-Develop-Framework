@@ -1,106 +1,97 @@
 """
 调用AirSim APIs执行SPFActionSpace输出的相对变化量
 """
+from typing import List, Optional
+
+import airsim
+
 from spf.base.thread_manager import SPFCtrlThreadManager
 from spf.base.base_controller import BaseController
 from spf.spf_action_space import SPFActionSpace
-import airsim
-from typing import Callable, Optional
-# from config import SPFAirSimConfig
-import numpy as np
-import logging
+from utils import load_config
+from base.command import Command
+from spf_action import SPFAction
 
-class SPFController(BaseController):
+class SPFController(BaseController[SPFCtrlThreadManager]):
+
+    platform = "AirSim"
+
     def __init__(
             self, 
-            vlm: Callable[[str, np.ndarray], str], 
-            cfg_path: str = None,
-            image_width: int = 1920, 
-            image_height: int = 1080, 
-            airsim_ip: str = "127.0.0.1", 
-            airsim_port: int = 41451,
-            vehicle_name: str = "", 
-
-            output_dir: Optional[str] = None):
+            cfg_path: str,
+            action_space: Optional[SPFActionSpace] = None
+    ):
+        
         super().__init__()
-        self.platform_client = self._get_platform_client(ip=airsim_ip, port=airsim_port)
-        self.vehicle_name = vehicle_name
 
-        self.action_space = SPFActionSpace(n_samples=6, cfg_path=cfg_path)
+        cfg = load_config(cfg_path)
+        self.vehicle_name = cfg.get("vehicle_name", "")
+        self.airsim_ip: str = cfg.get("airsim_ip", "")
+        self.airsim_port: int = cfg.get("airsim_port", 41451)
+        self.action_space = action_space or SPFActionSpace(cfg_path=cfg_path)
 
-        self.logger = logging.getLogger("SPFController")
+    # ------- 平台层 --------
+    def _get_platform_client(self):
+        return airsim.MultirotorClient(ip=self.airsim_ip, port=self.airsim_port)
 
-    def _get_platform_client(self, airsim_ip, airsim_port):
-        client = airsim.MultirotorClient(ip=airsim_ip, port=airsim_port)
-        return client
-
-    @property
-    def _connect(self):
+    def _platform_connect(self) -> None:
         self.platform_client.confirmConnection()
         self.platform_client.enableApiControl(True, self.vehicle_name)
         self.platform_client.armDisarm(True, self.vehicle_name)
-        self._connected=True
+        self.logger.info(f"AirSim is connected ({self.airsim_ip}:{self.airsim_port}, vehicle={self.vehicle_name})")
 
-    def takeoff(self):
+    def _create_ctrl_thread_manager(self) -> SPFCtrlThreadManager:
+        return SPFCtrlThreadManager(self.execute_cmd, name="airsim-control")
+
+    def takeoff(self) -> None:
         self.platform_client.takeoffAsync(vehicle_name=self.vehicle_name).join()
 
-    def land(self):
+    def land(self) -> None:
         self.platform_client.hoverAsync(vehicle_name=self.vehicle_name).join()
         self.platform_client.landAsync(vehicle_name=self.vehicle_name).join()
 
-    # ------------ 控制逻辑与专用线程管理 -------------
-    def execute_cmd(self, cmd):
+    def _shutdown(self) -> None:
+        self.land()
+        self.platform_client.armDisarm(False, self.vehicle_name)
+        self.platform_client.enableApiControl(False, self.vehicle_name)
+
+    def execute_cmd(self, cmd: Command):
         if not cmd: return 
 
         cmd_type, params = cmd
+        client, vn = self.platform_client, self.vehicle_name
         try:
             if cmd_type == "rotate_yaw":
                 angle, yaw_rate = params['angle'], params['yaw_rate', 30.0]
                 duration = abs(angle) / yaw_rate
-                rate = yaw_rate if angle >0 else -yaw_rate
+                rate = yaw_rate if angle >0 else -yaw_rate  # AirSim：顺时针为正
 
-                self.platform_client.rotateByYawRateAsync(rate, duration, vehicle_name=self.vehicle_name).join()
-                self.platform_client.hoverAsync(vehicle_name=self.vehicle_name).join()
+                client.rotateByYawRateAsync(rate, duration, vehicle_name=vn).join()
+                client.hoverAsync(vehicle_name=vn).join()
 
             elif cmd_type == "move_velocity_body":
                 yaw_mode = airsim.YawMode(is_rate=True, yaw_or_rate=params.get("yaw_rate",0))
-                self.platform_client.moveByVelocityBodyFrameAsync(
+                client.moveByVelocityBodyFrameAsync(
                     params["vx"],
                     params["vy"],
                     params["vz"],
                     params["duration"],
                     airsim.DrivetrainType.MaxDegreeOfFreedom,
                     yaw_mode,
-                    vehicle_name = self.vehicle_name).join()
-                self.platform_client.hoverAsync().join()        
+                    vehicle_name = vn).join()
+                client.hoverAsync().join()        
+            else:
+                raise ValueError(f"unkown command type: {cmd_type}")
         except Exception as e:
-            self.logger.exception("Command execution failed: %s", e)
+            self._record_error(e)
 
-    def _create_ctrl_thread_manager(self) -> SPFCtrlThreadManager:
-        return SPFCtrlThreadManager(self.execute_cmd, name="airsim-control")
+    # ---------- high-level action -> low-level command -----
+    def submit_action(self, action: SPFAction) -> List[Command]:
+        """ 把一个 SPFAction 翻译成 Command，并提交，返回提交的命令列表，空列表表示不动 """
+        if not isinstance(action, SPFAction):
+            raise TypeError(f"expected SPFAction, got {type(action).__name__}")
 
-    def _shutdown(self):
-        self.land()
-        self.platform_client.armDisarm(False, self.vehicle_name)
-        self.platform_client.enableApiControl(False, self.vehicle_name)
-
-    # ------------- workflow: 看图 -> 决策 -> cmd ----------
-    def workflow(self, current_frame: np.adrray, instruct: str):
-        try:
-            actions = self.action_projector.get_vlm_points(current_frame, instruct)
-            if not actions:
-                raise ValueError("No valid actions identified!\n")
-
-            action = actions[0]
-            if action is None:
-                raise ValueError(f"Action {action} is invalid action!\n")
-
-            self._submit_action(action)
-            return f"\n=== SINGLE ACTION MODE ===\n\n→ Moving: ({action.dx:.2f}, {action.dy:.2f}, {action.dz:.2f})"
-        except Exception as e:
-            self.logger.error("ERROR: %s", e)
-            return "Error processing cmd! Check log file\n"
-
-    def _submit_action(self, action):
-        for cmd in self.action_space.action_to_cmds(action):
+        cmds = self.action_space.action_to_cmds(action)
+        for cmd in cmds:
             self.submit_cmd(cmd)
+        return cmds

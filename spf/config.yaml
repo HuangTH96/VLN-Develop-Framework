@@ -1,0 +1,14 @@
+
+"base_velocity": 2.0,
+"base_yaw_rate": 30.0,
+"min_command_duration": 2.0,
+
+# SPFController
+"airsim_ip": "127.0.0.1",
+"airsim_port": 41451,
+"vehicle_name": "spf_drone"
+
+# SPFPolicy
+'adaptive_mode': false
+'fov_horizontal': 108.0
+'output_dir': ./spf_reason_records

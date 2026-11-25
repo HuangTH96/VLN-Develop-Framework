@@ -10,6 +10,7 @@ import logging
 import queue
 from typing import Any, Callable
 from abc import ABC, abstractmethod
+from command import Command
 
 class CtrlThreadManager(ABC):
     """
@@ -27,9 +28,9 @@ class CtrlThreadManager(ABC):
         self._handler, self._poll = handler, poll                                   # handler 是实际处理 item 的回调函数
 
         self._stop_evt = threading.Event()                                          # 停止信号：set() 只是把标志置真，由 _run 循环自己检查后退出
-        self._cv = threading.Condition()                                            # 一把锁 + 等待/唤醒，保护 _pending，并让 wait_idle 能等它变成 0      
+        self._cv = threading.Condition()                                            # with self._cv: 锁定代码块，同一时刻只允许一个线程进入代码块；这里都用来保护 self._pending 变量 
         self._pending = 0                                                           # 多线程共享变量，记录任务个数                                              
-        self._tasks: "queue.Queue" = queue.Queue()
+        self._cmds: "queue.Queue" = queue.Queue()
         self._thread = threading.Thread(target=self._run, name=thread_name, daemon=True)   # 创建一个后台线程运行 self._run，命名为 name，当主程序结束时，后台线程也会自动销毁
 
         # logger
@@ -39,20 +40,21 @@ class CtrlThreadManager(ABC):
         self._thread.start()
 
     @abstractmethod
-    def submit(self) -> None:
+    def submit(self, cmd: Command) -> None:
         """ 提交一个任务，不阻塞 """
 
     def _run(self) -> None:
-        """ 死循环，从任务队列中提取任务，调用 handler(item) 执行，完成后标记 """
+        """ 死循环，从指令队列中提取指令，调用 handler(cmds) 执行，完成后标记 """
         while not self._stop_evt.is_set():
             try:
-                item = self._tasks.get(timeout=self._poll)
+                cmd = self._cmds.get(timeout=self._poll)
             except queue.Empty:
                 continue
 
             try:
-                self._handler(item)
+                self._handler(cmd)  # 实际上是 BaseController.execute_cmd
             except Exception:  # a failing command must not kill the worker
+                # TODO: 和BaseController 一样，使用_record_error 记录
                 self.logger.exception("Command handler failed")
             finally:
                 self._done(1)
@@ -99,12 +101,23 @@ class CtrlThreadManager(ABC):
 class SPFCtrlThreadManager(CtrlThreadManager):
     """SPF 的策略：先进先出，每条命令都排队，按顺序逐条执行完。"""
 
-    def __init__(self, handler: Callable[[Any],None], poll: float = 0.1, thread_name: str = 'spf-controller', logger_name: str = "spf-logger"):
-        super.__init__(handler = handler, poll = poll, thread_name=thread_name, logger_name = logger_name)
+    def __init__(
+            self, 
+            handler: Callable[[Any],None], 
+            poll: float = 0.1, 
+            thread_name: str = 'spf-controller', 
+            logger_name: str = "spf-logger"
+        ):
+        super.__init__(
+            handler = handler, 
+            poll = poll, 
+            thread_name=thread_name, 
+            logger_name = logger_name
+        )
 
         self.start()
     
-    def submit(self, item:Any) -> None:
+    def submit(self, item:Command) -> None:
         if self._stop_evt.is_set():
             raise RuntimeError("ThreadManager is stopped!")
         
