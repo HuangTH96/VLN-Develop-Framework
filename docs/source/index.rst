@@ -13,40 +13,4 @@ DJI M350）
    :maxdepth: 2
    :caption: 导航目录:
 
-核心 API 参考
-=========================================
-.. automodule:: spf.base.base_controller
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-.. automodule:: spf.base.base_action
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-.. automodule:: spf.base.base_action_space
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-.. automodule:: spf.base.policy
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-.. automodule:: spf.base.command
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-.. automodule:: spf.base.thread_manager
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
+   api/modules

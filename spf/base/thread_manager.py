@@ -10,7 +10,7 @@ import logging
 import queue
 from typing import Any, Callable
 from abc import ABC, abstractmethod
-from command import Command
+from spf.base.command import Command
 
 class CtrlThreadManager(ABC):
     """

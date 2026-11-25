@@ -7,9 +7,9 @@ from typing import Callable, Optional, Tuple
 
 import numpy as np
 
-from base.base_policy import BasePolicy
+from spf.base.base_policy import BasePolicy
 from spf.observation import Observation
-from spf_action import SPFAction
+from spf.spf_action import SPFAction
 
 log = logging.getLogger("spf-policy")
 

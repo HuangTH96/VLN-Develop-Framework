@@ -19,7 +19,8 @@
       <script src="_static/translations.js?v=beaddf03"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
-    <link rel="search" title="搜索" href="search.html" /> 
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="spf" href="api/modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,37 +42,11 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">VLN Develop Framework documentation</a></li>
-<li><a class="reference internal" href="#module-spf.base.base_controller">核心 API 参考</a><ul>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController"><code class="docutils literal notranslate"><span class="pre">BaseController</span></code></a><ul>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.platform"><code class="docutils literal notranslate"><span class="pre">BaseController.platform</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.logger"><code class="docutils literal notranslate"><span class="pre">BaseController.logger</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.platform_client"><code class="docutils literal notranslate"><span class="pre">BaseController.platform_client</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.last_error"><code class="docutils literal notranslate"><span class="pre">BaseController.last_error</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController._abc_impl"><code class="docutils literal notranslate"><span class="pre">BaseController._abc_impl</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController._create_ctrl_thread_manager"><code class="docutils literal notranslate"><span class="pre">BaseController._create_ctrl_thread_manager()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController._get_platform_client"><code class="docutils literal notranslate"><span class="pre">BaseController._get_platform_client()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController._platform_connect"><code class="docutils literal notranslate"><span class="pre">BaseController._platform_connect()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController._record_error"><code class="docutils literal notranslate"><span class="pre">BaseController._record_error()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController._shutdown"><code class="docutils literal notranslate"><span class="pre">BaseController._shutdown()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.connect"><code class="docutils literal notranslate"><span class="pre">BaseController.connect()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.ctrl_thread_manager"><code class="docutils literal notranslate"><span class="pre">BaseController.ctrl_thread_manager</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.execute_cmd"><code class="docutils literal notranslate"><span class="pre">BaseController.execute_cmd()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.get_pose"><code class="docutils literal notranslate"><span class="pre">BaseController.get_pose()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.land"><code class="docutils literal notranslate"><span class="pre">BaseController.land()</span></code></a></li>
-<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">BaseController.platform</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.stop"><code class="docutils literal notranslate"><span class="pre">BaseController.stop()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.submit_cmd"><code class="docutils literal notranslate"><span class="pre">BaseController.submit_cmd()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.takeoff"><code class="docutils literal notranslate"><span class="pre">BaseController.takeoff()</span></code></a></li>
-<li><a class="reference internal" href="#spf.base.base_controller.BaseController.wait_idle"><code class="docutils literal notranslate"><span class="pre">BaseController.wait_idle()</span></code></a></li>
+              <p class="caption" role="heading"><span class="caption-text">导航目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">spf</a></li>
 </ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
+
         </div>
       </div>
     </nav>
@@ -101,265 +76,22 @@
 <p>这项工作基于SPF的开源代码，尝试分离出通用的VLN算法开发框架。该框架可以用于不同平台（AirSim、ROS1、ROS2、Tello
 DJI M350）</p>
 <div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">导航目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">spf</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/spf.html">spf package</a></li>
+</ul>
+</li>
+</ul>
 </div>
-</section>
-<section id="module-spf.base.base_controller">
-<span id="api"></span><h1>核心 API 参考<a class="headerlink" href="#module-spf.base.base_controller" title="Link to this heading"></a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spf.base.base_controller.</span></span><span class="sig-name descname"><span class="pre">BaseController</span></span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController" title="Link to this definition"></a></dt>
-<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>平台无关的控制器骨架。根据不同的平台，具体实现Command</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.platform">
-<span class="sig-name descname"><span class="pre">platform</span></span><a class="headerlink" href="#spf.base.base_controller.BaseController.platform" title="Link to this definition"></a></dt>
-<dd><p>子类覆盖的平台标识字符串，如 'AirSim'、'PX4'</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.logger">
-<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#spf.base.base_controller.BaseController.logger" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>logging.logger</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.platform_client">
-<span class="sig-name descname"><span class="pre">platform_client</span></span><a class="headerlink" href="#spf.base.base_controller.BaseController.platform_client" title="Link to this definition"></a></dt>
-<dd><p>平台相关的底层客户端实例</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Any</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.last_error">
-<span class="sig-name descname"><span class="pre">last_error</span></span><a class="headerlink" href="#spf.base.base_controller.BaseController.last_error" title="Link to this definition"></a></dt>
-<dd><p>记录最近一次发生的异常</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional[BaseException]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#spf.base.base_controller.BaseController._abc_impl" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController._create_ctrl_thread_manager">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_create_ctrl_thread_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController._create_ctrl_thread_manager"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController._create_ctrl_thread_manager" title="Link to this definition"></a></dt>
-<dd><p>返回一个以 self.execute_cmd 为 handler 的线程管理器。</p>
-<dl class="field-list simple">
-<dt class="field-odd">返回<span class="colon">:</span></dt>
-<dd class="field-odd"><p>线程管理器实例</p>
-</dd>
-<dt class="field-even">返回类型<span class="colon">:</span></dt>
-<dd class="field-even"><p>CtrlThreadManager</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController._get_platform_client">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_get_platform_client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController._get_platform_client"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController._get_platform_client" title="Link to this definition"></a></dt>
-<dd><p>生成平台相关的客户端实例</p>
-<dl class="field-list simple">
-<dt class="field-odd">返回<span class="colon">:</span></dt>
-<dd class="field-odd"><p>平台客户端。如 airsim.MultirotorClient()</p>
-</dd>
-<dt class="field-even">返回类型<span class="colon">:</span></dt>
-<dd class="field-even"><p>Any</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController._platform_connect">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_platform_connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController._platform_connect"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController._platform_connect" title="Link to this definition"></a></dt>
-<dd><p>连接平台并准备接收命令</p>
-<dl class="field-list simple">
-<dt class="field-odd">返回<span class="colon">:</span></dt>
-<dd class="field-odd"><p>连接成功返回True，否则返回False</p>
-</dd>
-<dt class="field-even">返回类型<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController._record_error">
-<span class="sig-name descname"><span class="pre">_record_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController._record_error"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController._record_error" title="Link to this definition"></a></dt>
-<dd><p>记录并打印命令执行错误</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>e</strong> (<em>BaseException</em>) -- 捕获到的异常实例</p>
-</dd>
-<dt class="field-even">返回类型<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController._shutdown">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController._shutdown"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController._shutdown" title="Link to this definition"></a></dt>
-<dd><p>线程停止后的收尾工作。</p>
-<p>通常包含悬停、降落、解除控制等平台相关操作。</p>
-<dl class="field-list simple">
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.connect">
-<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController.connect"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController.connect" title="Link to this definition"></a></dt>
-<dd><p>创建客户端并连接平台。</p>
-<p>该方法支持重复调用。如果已经连接，则直接返回。</p>
-<dl class="field-list simple">
-<dt class="field-odd">抛出<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ValueError</strong> -- 当无法成功连接到目标平台时抛出</p>
-</dd>
-<dt class="field-even">返回类型<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.ctrl_thread_manager">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ctrl_thread_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CtrlThreadManager</span></em><a class="headerlink" href="#spf.base.base_controller.BaseController.ctrl_thread_manager" title="Link to this definition"></a></dt>
-<dd><p>获取控制线程管理器，首次访问时才会触发创建</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>CtrlThreadManager</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.execute_cmd">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">execute_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController.execute_cmd"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController.execute_cmd" title="Link to this definition"></a></dt>
-<dd><p>阻塞地执行一条命令。</p>
-<p>该方法运行在工作线程里。如果执行失败，必须调用 <cite>_record_error(e)</cite> 记录异常</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cmd</strong> (<em>Command</em>) -- 要执行的指令对象</p>
-</dd>
-<dt class="field-even">返回类型<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.get_pose">
-<span class="sig-name descname"><span class="pre">get_pose</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController.get_pose"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController.get_pose" title="Link to this definition"></a></dt>
-<dd><p>获取无人机当前在世界坐标系下的姿态。</p>
-<p>用于判断碰撞、同步位置等闭环任务。</p>
-<dl class="field-list simple">
-<dt class="field-odd">返回<span class="colon">:</span></dt>
-<dd class="field-odd"><p>包含位置和朝向的姿态数据，未实现时返回None</p>
-</dd>
-<dt class="field-even">返回类型<span class="colon">:</span></dt>
-<dd class="field-even"><p>Optional[Any]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.land">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">land</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController.land"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController.land" title="Link to this definition"></a></dt>
-<dd><p>触发无人机降落</p>
-<dl class="field-list simple">
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">platform</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'unkonwn'</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.stop">
-<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController.stop"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController.stop" title="Link to this definition"></a></dt>
-<dd><p>停止控制器工作。</p>
-<p>此操作会遵循一下步骤：
-1. 先停工作线程。如果线程正在执行长命令，后续的平台收尾工作将会将其打断。
-2. 进行平台层面的收尾工作（调用 <cite>_shutdown</cite>）。</p>
-<dl class="field-list simple">
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.submit_cmd">
-<span class="sig-name descname"><span class="pre">submit_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController.submit_cmd"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController.submit_cmd" title="Link to this definition"></a></dt>
-<dd><p>提交一条命令到队列中，此操作为非阻塞。</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cmd</strong> (<em>Command</em>) -- 待提交的指令对象</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.takeoff">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">takeoff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController.takeoff"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController.takeoff" title="Link to this definition"></a></dt>
-<dd><p>触发无人机起飞</p>
-<dl class="field-list simple">
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="spf.base.base_controller.BaseController.wait_idle">
-<span class="sig-name descname"><span class="pre">wait_idle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spf/base/base_controller.html#BaseController.wait_idle"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#spf.base.base_controller.BaseController.wait_idle" title="Link to this definition"></a></dt>
-<dd><p>等待已提交的命令全部执行完成。</p>
-<p>注意： 命令失败也算&quot;完成&quot;。如果需要检查错误，请在调用后配合 <cite>raise_if_failed()</cite> 使用。</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) -- 最多等待的超时时间（秒）。默认30.0</p>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>如果在超时前全部命令执行完毕，返回True，否则返回False</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="api/modules.html" class="btn btn-neutral float-right" title="spf" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

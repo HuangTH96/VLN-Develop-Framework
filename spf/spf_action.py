@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from .base.base_action import BaseAction
+from spf.base.base_action import BaseAction
 
 @dataclass
 class SPFAction(BaseAction):

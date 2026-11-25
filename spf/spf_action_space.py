@@ -2,10 +2,10 @@ import math
 from typing import List
 import logging
 
-from base.base_action_space import BaseActionSpace
-from base.command import Command
-from spf_action import SPFAction
-from utils import load_config
+from spf.base.base_action_space import BaseActionSpace
+from spf.base.command import Command
+from spf.spf_action import SPFAction
+from spf.utils import load_config
 
 log = logging.getLogger("spf_action_space")
 

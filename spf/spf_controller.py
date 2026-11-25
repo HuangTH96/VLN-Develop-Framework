@@ -8,9 +8,9 @@ import airsim
 from spf.base.thread_manager import SPFCtrlThreadManager
 from spf.base.base_controller import BaseController
 from spf.spf_action_space import SPFActionSpace
-from utils import load_config
-from base.command import Command
-from spf_action import SPFAction
+from spf.utils import load_config
+from spf.base.command import Command
+from spf.spf_action import SPFAction
 
 class SPFController(BaseController[SPFCtrlThreadManager]):
 
