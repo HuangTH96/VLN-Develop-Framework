@@ -13,12 +13,23 @@ from abc import ABC, abstractmethod
 from spf.base.command import Command
 
 class ExecThreadManager(ABC):
-    """
-    单工作线程执行器。
+    """ 指令执行线程管理器。
+        
+    构造时不启动线程：先把自己的属性设置完，最后调用 self.start()。
     
-    基类实现全部通用机制，只把"提交策略"留给子类。
+    Args:
+        handler     回调函数，用于实际执行命令
+        poll        从指令队列中取指令时的延迟
+        thread_name 线程名称
+        logger_name 日志名称
     
-    构造时不启动线程：子类先把自己的属性设置完，最后一行调用 self.start()。
+    Attributes:
+        _handler    回调函数
+        _step_evt   线程停止信号
+        _cv         变量锁定保护
+        _pending    指令个数
+        _thread     指令执行线程
+        logger      日志文件
     """
     def __init__(self, handler: Callable[[Any],None], poll: float = 5.0, thread_name: str = 'base_thread', logger_name: str = "base_logger"):
         if handler is None:
@@ -37,14 +48,25 @@ class ExecThreadManager(ABC):
         self.logger = logging.getLogger(logger_name)
 
     def start(self):
+        """ 启动指令执行线程 """
         self._thread.start()
 
     @abstractmethod
     def submit(self, cmd: Command) -> None:
-        """ 提交一个任务，不阻塞 """
+        """ 提交指令
+         
+        需要在子类中具体实现
+        """
 
     def _run(self) -> None:
-        """ 死循环，从指令队列中提取指令，调用 handler(cmds) 执行，完成后标记 """
+        """ 循环逻辑
+        
+        内部是一个死循环：按照FIFO的顺序，从指令队列中依次提取指令，调用 `handler(cmds)` 执行，完成后标记 
+        
+        Raises:
+            queue.Empty 当指令队列中没有成员时，抛出
+            Exception   指令执行失败
+        """
         while not self._stop_evt.is_set():
             try:
                 cmd = self._cmds.get(timeout=self._poll)
@@ -60,17 +82,40 @@ class ExecThreadManager(ABC):
                 self._done(1)
 
     def _done(self, n:int) -> None:
+        """ 指令执行成功通知
+
+        更新剩余任务个数，唤醒需要 _pending 控制权的线程
+
+        Args:
+            n(int) 已完成的指令个数        
+        """
         with self._cv:              # 获取独占锁
             self._pending -= n      # 记录完成了n个任务
             self._cv.notify_all()   # 唤醒所有在 wait_idle 里等待的线程
 
     def wait_idle(self, timeout: float = 30.0) -> bool:
-        """True when everything submitted so far has finished; False on timeout."""
+        """ 指令完成通知
+        
+        当所有指令都完成时，返回True；否则，返回False
+        
+        Args:
+            timeout 查询指令是否全部完成的时间
+            
+        Returns：
+            布尔值.
+        """
         with self._cv:
             return self._cv.wait_for(lambda: self._pending == 0, timeout)
 
     def _clear(self) -> int:
-        """Drop items that have not started yet (the running one cannot be cancelled). Returns how many were dropped."""
+        """ 丢弃剩余为执行的指令
+        
+        正在执行的指令无法丢弃
+        
+        Returns:
+            n(int) 丢弃了多少调指令
+        """
+
         n = 0
         while True:
             try:
@@ -83,6 +128,13 @@ class ExecThreadManager(ABC):
         return n
     
     def stop(self, timeout = 5.0) -> bool:
+        """ 停止指令执行进程
+
+        清空剩余未执行的命令
+
+        Returns:
+            指令执行线程已经死亡        
+        """
         self._stop_evt.set()
         self._clear()
         if self._thread.ident is not None:  # 从未start的线程不能join
@@ -92,6 +144,7 @@ class ExecThreadManager(ABC):
     
     # 状态查询
     def pending(self) -> int:
+        """ 查询正在排队的指令个数 """
         with self._cv:
             return self._pending
 
@@ -99,7 +152,7 @@ class ExecThreadManager(ABC):
         return self._thread.is_alive()
 
 class SPFExecThreadManager(ExecThreadManager):
-    """SPF 的策略：先进先出，每条命令都排队，按顺序逐条执行完。"""
+    """ SPF 指令执行线程管理器"""
 
     def __init__(
             self, 
@@ -118,10 +171,17 @@ class SPFExecThreadManager(ExecThreadManager):
         self.start()
     
     def submit(self, item:Command) -> None:
+        """ 为指令排队
+        
+        更新指令个数计数器
+
+        Raises:
+            RuntimeError 指令执行线程已经死亡
+        """
         if self._stop_evt.is_set():
             raise RuntimeError("ThreadManager is stopped!")
         
         with self._cv:
             self._pending += 1
         
-        self._tasks.put(item)       # 将新任务存入到任务队列中
+        self._cmds.put(item)       # 将新任务存入到任务队列中

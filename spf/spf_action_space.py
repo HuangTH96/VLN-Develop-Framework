@@ -10,6 +10,7 @@ from spf.utils import load_config
 log = logging.getLogger("spf_action_space")
 
 class SPFActionSpace(BaseActionSpace[SPFAction]):
+    """ SPF 动作空间 """
     def __init__(
             self, 
 
@@ -22,9 +23,17 @@ class SPFActionSpace(BaseActionSpace[SPFAction]):
         self.min_command_duration = config.get("min_command_duration", 2.0)
 
     def action_to_cmds(self, action: SPFAction) -> List[Command]:
-        """
-        Convert SPFAction to AirSim APIs.
-        First rotate, then move
+        """ 将高维动作 SPFAction 翻译成低维命令 Command
+        
+        工作流程如下:
+            1. 先根据目标位移量计算偏航角度.当偏转量大于10度时,添加指令类型 `rotate_yaw` ;否则不添加该类型
+            2. 生成前进指令 `move_by_velocity`.指令形式为 速度 与 持续时间, 进产生前进运动,无侧向运动
+
+        Args:
+            action: SPFAction的实例,继承自BaseAction,由SPFPolicy的输出构建而来
+
+        Returns:
+            List[Command]: 一连串的Command
         """
 
         commands: List[Command] = []

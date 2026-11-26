@@ -7,8 +7,13 @@ from spf.base.command import Command
 
 
 class BaseController(ABC):
-    """平台无关的控制器骨架。根据不同的平台，具体实现Command
+    """平台无关的控制器骨架。
     
+    具体实现以下功能:
+        1. 平台. 初始化平台client,连接平台
+        2. 指令执行. 创建并行的指令执行进程,依次保存新指令.创建指令执行逻辑
+        3. 工作流程. 飞机起飞和降落; 检测指令是否全部完成; 完成后停止指令执行进程,断开和平台的连接
+        
     Attributes:
         platform(str): 子类覆盖的平台标识字符串，如 'AirSim'、'PX4'
         logger(logging.logger)：当前平台的日志记录器
