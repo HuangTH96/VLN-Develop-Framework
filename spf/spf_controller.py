@@ -12,7 +12,7 @@ from spf.utils import load_config
 from spf.base.command import Command
 from spf.spf_action import SPFAction
 
-class SPFController(BaseController[SPFCtrlThreadManager]):
+class SPFController(BaseController):
 
     platform = "AirSim"
 
