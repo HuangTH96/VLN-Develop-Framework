@@ -5,7 +5,7 @@ from typing import List, Optional
 
 import airsim
 
-from spf.base.thread_manager import SPFCtrlThreadManager
+from spf.base.thread_manager import SPFExecThreadManager
 from spf.base.base_controller import BaseController
 from spf.spf_action_space import SPFActionSpace
 from spf.utils import load_config
@@ -40,8 +40,8 @@ class SPFController(BaseController):
         self.platform_client.armDisarm(True, self.vehicle_name)
         self.logger.info(f"AirSim is connected ({self.airsim_ip}:{self.airsim_port}, vehicle={self.vehicle_name})")
 
-    def _create_ctrl_thread_manager(self) -> SPFCtrlThreadManager:
-        return SPFCtrlThreadManager(self.execute_cmd, name="airsim-control")
+    def _create_ctrl_thread_manager(self) -> SPFExecThreadManager:
+        return SPFExecThreadManager(self.execute_cmd, name="airsim-control")
 
     def takeoff(self) -> None:
         self.platform_client.takeoffAsync(vehicle_name=self.vehicle_name).join()

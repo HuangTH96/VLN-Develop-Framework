@@ -12,7 +12,7 @@ from typing import Any, Callable
 from abc import ABC, abstractmethod
 from spf.base.command import Command
 
-class CtrlThreadManager(ABC):
+class ExecThreadManager(ABC):
     """
     单工作线程执行器。
     
@@ -98,7 +98,7 @@ class CtrlThreadManager(ABC):
     def is_alive(self) -> bool:
         return self._thread.is_alive()
 
-class SPFCtrlThreadManager(CtrlThreadManager):
+class SPFExecThreadManager(ExecThreadManager):
     """SPF 的策略：先进先出，每条命令都排队，按顺序逐条执行完。"""
 
     def __init__(

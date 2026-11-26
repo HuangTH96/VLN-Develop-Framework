@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 import logging
 
-from spf.base.thread_manager import CtrlThreadManager
+from spf.base.thread_manager import ExecThreadManager
 from spf.base.command import Command
 
 
@@ -21,7 +21,7 @@ class BaseController(ABC):
     def __init__(self):        
         self.logger = logging.getLogger(f"spf.controller.{self.platform}")
         self.platform_client = None
-        self._ctrl_thread_manager: Optional[CtrlThreadManager] = None
+        self._ctrl_thread_manager: Optional[ExecThreadManager] = None
         self._connected = False
         self.last_error: Optional[BaseException] = None
 
@@ -43,11 +43,11 @@ class BaseController(ABC):
         """
 
     @abstractmethod
-    def _create_ctrl_thread_manager(self) -> CtrlThreadManager:
+    def _create_ctrl_thread_manager(self) -> ExecThreadManager:
         """ 返回一个以 self.execute_cmd 为 handler 的线程管理器。
         
         Returns:
-            CtrlThreadManager: 线程管理器实例
+            ExecThreadManager: 线程管理器实例
         """
 
     @abstractmethod
@@ -107,8 +107,8 @@ class BaseController(ABC):
             raise ValueError(f"Fail to connect platform!")
 
     @property
-    def ctrl_thread_manager(self) -> CtrlThreadManager:
-        """ CtrlThreadManager: 获取控制线程管理器，首次访问时才会触发创建 """
+    def ctrl_thread_manager(self) -> ExecThreadManager:
+        """ ExecThreadManager: 获取控制线程管理器，首次访问时才会触发创建 """
         if self._ctrl_thread_manager is None:
             self._ctrl_thread_manager = self._create_ctrl_thread_manager()
             return self._ctrl_thread_manager
