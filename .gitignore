@@ -1,1 +1,3 @@
 .vscode
+spf/__pycache__
+spf/base/__pycache__

@@ -21,7 +21,7 @@ class BaseController(ABC):
     def __init__(self):        
         self.logger = logging.getLogger(f"spf.controller.{self.platform}")
         self.platform_client = None
-        self._ctrl_thread_manager: Optional[ExecThreadManager] = None
+        self._exec_thread_manager: Optional[ExecThreadManager] = None
         self._connected = False
         self.last_error: Optional[BaseException] = None
 
@@ -43,7 +43,7 @@ class BaseController(ABC):
         """
 
     @abstractmethod
-    def _create_ctrl_thread_manager(self) -> ExecThreadManager:
+    def _create_exec_thread_manager(self) -> ExecThreadManager:
         """ 返回一个以 self.execute_cmd 为 handler 的线程管理器。
         
         Returns:
@@ -109,9 +109,9 @@ class BaseController(ABC):
     @property
     def ctrl_thread_manager(self) -> ExecThreadManager:
         """ ExecThreadManager: 获取控制线程管理器，首次访问时才会触发创建 """
-        if self._ctrl_thread_manager is None:
-            self._ctrl_thread_manager = self._create_ctrl_thread_manager()
-            return self._ctrl_thread_manager
+        if self._exec_thread_manager is None:
+            self._exec_thread_manager = self._create_exec_thread_manager()
+            return self._exec_thread_manager
 
     def submit_cmd(self, cmd: Command):
         """提交一条命令到队列中，此操作为非阻塞。
@@ -132,7 +132,7 @@ class BaseController(ABC):
         Returns:
             bool: 如果在超时前全部命令执行完毕，返回True，否则返回False
         """
-        return self._ctrl_thread_manager.wait_idle(timeout)
+        return self._exec_thread_manager.wait_idle(timeout)
 
     # def raise_if_failed(self) -> None:
     #     err, self.last_error = self.last_error, None
@@ -146,7 +146,7 @@ class BaseController(ABC):
         1. 先停工作线程。如果线程正在执行长命令，后续的平台收尾工作将会将其打断。
         2. 进行平台层面的收尾工作（调用 `_shutdown`）。
         """
-        tm = self._ctrl_thread_manager
+        tm = self._exec_thread_manager
         if tm is not None and not tm.stop():
             self.logger.warning(f"{self.platform} worker still running a command; shutdown will interrupt it")
 
