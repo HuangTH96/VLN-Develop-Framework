@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from spf.base.base_action import BaseAction
-from spf.observation import Observation
+from spf.spf_observation import BaseObservation
 
 class BasePolicy(ABC):
     """ 算法基类
@@ -28,7 +28,7 @@ class BasePolicy(ABC):
         self.instruction = instruction
 
     @abstractmethod
-    def act(self, obs: Observation) -> Optional[BaseAction]:
+    def act(self, obs: BaseObservation) -> Optional[BaseAction]:
         """ 获取下一步动作。
 
         Args:
